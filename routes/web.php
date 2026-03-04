@@ -11,7 +11,7 @@ Route::get('/', function () {
             'major' => 'Teknik Informatika',
             'semester' => 'Semester 4',
             'location' => 'Indonesia',
-            'bio' => 'Mahasiswa yang antusias belajar dan berkembang di bidang teknologi.',
+            'bio' => 'Mahasiswa D3 Teknik Informatika, sedang mengikuti program studi di Politeknik Elektronika Negeri Surabaya.',
             'email' => 'magissillah@gmail.com',
             'phone' => '+62 812-1720-4394',
         ],
