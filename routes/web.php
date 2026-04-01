@@ -1,8 +1,41 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
+    if ($request->session()->get('sudah_masuk')) {
+        return redirect('/profile');
+    }
+
+    return view('login');
+});
+
+Route::get('/login', function (Request $request) {
+    if ($request->session()->get('sudah_masuk')) {
+        return redirect('/profile');
+    }
+
+    return view('login');
+})->name('login');
+
+Route::post('/masuk', function (Request $request) {
+    $request->session()->put('sudah_masuk', true);
+
+    return redirect('/profile');
+})->name('masuk');
+
+Route::post('/logout', function (Request $request) {
+    $request->session()->forget('sudah_masuk');
+
+    return redirect('/login');
+})->name('logout');
+
+Route::get('/profile', function (Request $request) {
+    if (! $request->session()->get('sudah_masuk')) {
+        return redirect('/login');
+    }
+
     return view('profile', [
         'profile' => [
             'name' => 'Muhammad Aghiitsillah',
