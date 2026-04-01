@@ -63,7 +63,7 @@
       margin: 0 auto;
     }
 
-    /* Navbar sticky di atas halaman. */
+    /* Navbar sticky di atas halaman + anchor posisi dropdown mobile. */
     .topbar {
       position: sticky;
       top: 12px;
@@ -174,19 +174,22 @@
     /* Panel menu dropdown mobile (muncul saat tiga titik diklik). */
     .mobile-menu {
       display: none;
-      margin-top: -4px;
-      margin-bottom: 12px;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 10px;
+      width: min(220px, calc(100vw - 36px));
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 12px;
       background: var(--surface);
-      padding: 10px;
+      padding: 8px;
       box-shadow: var(--shadow);
+      z-index: 50;
     }
 
     /* Class .open ditambahkan/dihapus via JavaScript. */
     .mobile-menu.open {
       display: grid;
-      gap: 8px;
+      gap: 6px;
       animation: menuIn 0.18s ease;
     }
 
@@ -195,8 +198,8 @@
       color: var(--text);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 9px 10px;
-      font-size: 0.82rem;
+      padding: 8px 9px;
+      font-size: 0.8rem;
       background: var(--surface-strong);
     }
 
@@ -205,8 +208,8 @@
       border-radius: 10px;
       text-transform: none;
       letter-spacing: 0;
-      font-size: 0.82rem;
-      padding: 9px 10px;
+      font-size: 0.8rem;
+      padding: 8px 9px;
     }
 
     /* Kartu hero sebagai section pembuka landing profile. */
@@ -471,6 +474,10 @@
         align-items: center;
         justify-content: center;
       }
+
+      .mobile-menu {
+        display: none;
+      }
     }
 
     /* Aturan desktop: layout diperbesar untuk ruang layar lebih lebar. */
@@ -504,6 +511,10 @@
       .grid {
         grid-template-columns: 1fr 1fr;
       }
+
+      .mobile-menu {
+        display: none !important;
+      }
     }
   </style>
 </head>
@@ -531,18 +542,18 @@
           <button type="submit" class="logout-btn">Keluar</button>
         </form>
       </div>
-    </nav>
 
-    {{-- Menu mobile muncul saat tombol tiga titik ditekan. --}}
-    <div class="mobile-menu" id="mobileMenu">
-      {{-- Anchor ini scroll ke section dengan id yang sesuai. --}}
-      <a href="#tentang">Tentang</a>
-      <a href="#kontak">Kontak</a>
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="logout-btn">Keluar</button>
-      </form>
-    </div>
+      {{-- Dropdown menu ringkas untuk mode HP. --}}
+      <div class="mobile-menu" id="mobileMenu">
+        {{-- Anchor ini scroll ke section dengan id yang sesuai. --}}
+        <a href="#tentang">Tentang</a>
+        <a href="#kontak">Kontak</a>
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="logout-btn">Keluar</button>
+        </form>
+      </div>
+    </nav>
 
     {{-- Hero section menampilkan ringkasan profile dan call-to-action. --}}
     <section class="hero" id="home">
@@ -654,13 +665,26 @@
       menuBtn.addEventListener('click', () => {
         // Toggle class .open agar menu mobile bisa tampil / tersembunyi.
         mobileMenu.classList.toggle('open');
+        menuBtn.setAttribute('aria-expanded', mobileMenu.classList.contains('open'));
       });
 
       // Tutup menu saat salah satu link di dalam menu dipilih.
       mobileMenu.querySelectorAll('a').forEach((item) => {
         item.addEventListener('click', () => {
           mobileMenu.classList.remove('open');
+          menuBtn.setAttribute('aria-expanded', 'false');
         });
+      });
+
+      // Tutup menu saat area luar menu diklik.
+      document.addEventListener('click', (event) => {
+        const clickedInsideMenu = mobileMenu.contains(event.target);
+        const clickedMenuButton = menuBtn.contains(event.target);
+
+        if (!clickedInsideMenu && !clickedMenuButton) {
+          mobileMenu.classList.remove('open');
+          menuBtn.setAttribute('aria-expanded', 'false');
+        }
       });
     }
   </script>
